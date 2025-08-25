@@ -230,7 +230,7 @@ const getUserProfile = (req, res) => {
       return res.status(401).json({
         success: false,
         message: "Error while getting user profile...",
-        error: "User not found..."
+        error: "User not found...",
       });
     }
 
@@ -249,4 +249,61 @@ const getUserProfile = (req, res) => {
   }
 };
 
-export default { registerUser, loginUser, logoutUser, getUserProfile };
+const promoteToAdmin = async (req, res) => {
+  try {
+    const userId = req.params?.userId;
+
+    if (!userId) {
+      throw new Error("UserId is required...");
+    }
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      throw new Error("User not found to assign admin role...");
+    }
+
+    if (user?.role !== "user") {
+      return res.status(400).json({
+        success: false,
+        message: "Error while promoting user role to admin...",
+        error: `User already has role as ${user?.role}`,
+      });
+    }
+
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: userId },
+      { $set: { role: "admin" } },
+      {
+        projection: {
+          password: 0,
+          refreshToken: 0,
+        },
+        new: true,
+      }
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "User role successfully promoted to Admin role...",
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.error("ERROR :: in promoteToAdmin controller :: ", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error while promoting from User to Admin...",
+      error:
+        error.message ||
+        "Something went wrong while promoting from User to Admin",
+    });
+  }
+};
+
+export default {
+  registerUser,
+  loginUser,
+  logoutUser,
+  getUserProfile,
+  promoteToAdmin,
+};

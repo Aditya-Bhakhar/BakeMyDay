@@ -45,4 +45,12 @@ router.get(
   userController.getUserProfile
 );
 
+// only admin access routes
+router.post(
+  "/admin/promoteToAdmin/:userId",
+  authMiddleware.verifyJwtToken,
+  authMiddleware.checkRoleIsSuperAdmin,
+  userController.promoteToAdmin
+);
+
 export default router;
