@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt"
+import bcrypt from "bcrypt";
 
 const userSchema = mongoose.Schema(
   {
@@ -13,8 +13,8 @@ const userSchema = mongoose.Schema(
         type: String,
         required: true,
         minLength: [3, "Firstname must be atleast 3 character long..."],
-    },
-    lastname: {
+      },
+      lastname: {
         type: String,
         reuired: true,
         minLength: [3, "Lastname must be atleast 3 character long..."],
@@ -32,6 +32,11 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
       minLength: [6, "Password must be at 6 character long..."],
+    },
+    role: {
+      type: String,
+      enum: ["admin", "user"],
+      default: "user",
     },
     age: {
       type: Number,
