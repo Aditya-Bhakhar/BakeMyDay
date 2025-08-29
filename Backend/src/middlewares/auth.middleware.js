@@ -47,7 +47,7 @@ const verifyJwtToken = async (req, res, next) => {
 
 const checkRoleIsSuperAdmin = (req, res, next) => {
   try {
-    if (req.user.role !== "superadmin") {
+    if (req.user?.role !== "superadmin") {
       return res.status(403).json({
         success: false,
         message: "Access Denied...",
@@ -66,4 +66,25 @@ const checkRoleIsSuperAdmin = (req, res, next) => {
   }
 };
 
-export default { verifyJwtToken, checkRoleIsSuperAdmin };
+const checkRoleIsAdmin = (req, res, next) => {
+  try {
+    if (req.user?.role === "user") {
+      return res.status(403).json({
+        success: false,
+        message: "Access Denied...",
+        error: "Access Denied...",
+      });
+    // throw new Error("Access Denied...");
+    }
+    next();
+  } catch (error) {
+    console.error("ERROR :: Error in checkRoleIsAdmin middleware :: ", error);
+    return res.status(403).json({
+      success: false,
+      message: "Access Denied...",
+      error: error.message || "Access Denied...",
+    });
+  }
+};
+
+export default { verifyJwtToken, checkRoleIsSuperAdmin, checkRoleIsAdmin };

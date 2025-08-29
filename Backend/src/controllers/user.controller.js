@@ -10,7 +10,7 @@ const registerUser = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: "Invalid data",
-        errors: errors.array(),
+        error: errors.array(),
       });
     }
 
@@ -48,7 +48,10 @@ const registerUser = async (req, res) => {
     // }
 
     if (req.file) {
-      profilePhoto = await uploadOnCloudinary(req.file.buffer, "BackMyDay");
+      profilePhoto = await uploadOnCloudinary(
+        req.file.buffer,
+        "BakeMyDay/User Profile Pictures"
+      );
       console.log("profilePhoto ::", profilePhoto);
 
       if (!profilePhoto) {
@@ -91,6 +94,7 @@ const registerUser = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Error while registeing user...",
+      error: error.message || "Something went wrong while registering user",
     });
   }
 };

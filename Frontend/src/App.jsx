@@ -3,7 +3,7 @@ function App() {
 
   return (
     <>
-    <div>BackMyDay</div>
+    <div>BakeMyDay</div>
     </>
   )
 }
