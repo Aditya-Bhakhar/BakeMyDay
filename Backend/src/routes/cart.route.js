@@ -15,6 +15,11 @@ router.post(
       .withMessage("Quantity can not be empty.")
       .isInt({ min: 0 })
       .withMessage("Quantity must be positive integer."),
+    body("price")
+      .notEmpty()
+      .withMessage("Price can not be empty.")
+      .isFloat({ min: 0 })
+      .withMessage("Price must be a positive number."),
   ],
   authMiddleware.verifyJwtToken,
   cartController.addToCart
@@ -22,6 +27,13 @@ router.post(
 
 router.put(
   "/update/:productId",
+  [
+    body("quantity")
+      .notEmpty()
+      .withMessage("Quantity can not be empty.")
+      .isInt({ min: 0 })
+      .withMessage("Quantity must be positive integer."),
+  ],
   authMiddleware.verifyJwtToken,
   cartController.updateCart
 );

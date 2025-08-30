@@ -14,13 +14,13 @@ const addToCart = async (req, res) => {
       });
     }
 
-    const { productId, quantity } = req.body;
+    const { productId, quantity, price } = req.body;
 
     const userId = req.user?._id;
 
     if (!userId) throw new Error("Unauthorized...");
 
-    if (!productId || !quantity) {
+    if (!productId || !quantity || !price) {
       throw new Error("All fields are required...");
     }
 
@@ -39,8 +39,9 @@ const addToCart = async (req, res) => {
 
     if (itemIndex > -1) {
       cart.items[itemIndex].quantity += quantity;
+      cart.items[itemIndex].price = price
     } else {
-      cart.items.push({ product: productId, quantity });
+      cart.items.push({ product: productId, quantity, price });
     }
 
     await cart.save();

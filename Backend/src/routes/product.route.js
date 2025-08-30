@@ -78,7 +78,7 @@ router.delete(
   productController.removeProduct
 );
 
-// protected public accessible routes
+// protected - user accessible routes
 
 router.get(
   "/",
