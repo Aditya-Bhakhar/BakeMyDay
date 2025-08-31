@@ -23,20 +23,37 @@ router.patch(
 // protected - user accessible routes
 
 router.post(
-  "/place",
+  "/online",
   [
     body("shippingAddress")
       .notEmpty()
       .withMessage("Shipping address can not be empty"),
   ],
   authMiddleware.verifyJwtToken,
-  orderController.placeOrder
+  orderController.createOnlineOrder
+);
+
+router.post(
+  "/COD",
+  [
+    body("shippingAddress")
+      .notEmpty()
+      .withMessage("Shipping address can not be empty"),
+  ],
+  authMiddleware.verifyJwtToken,
+  orderController.createCODOrder
 );
 
 router.post(
   "/verify",
   authMiddleware.verifyJwtToken,
   orderController.verifyPayment
+);
+
+router.post(
+  "/fail",
+  authMiddleware.verifyJwtToken,
+  orderController.paymentFailed
 );
 
 router.get("/my", authMiddleware.verifyJwtToken, orderController.getMyOrders);

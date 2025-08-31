@@ -15,6 +15,8 @@ const orderSchema = new mongoose.Schema(
           ref: "Product",
           required: [true, "Product is missing"],
         },
+        name: { type: String, required: [true, "Product name is missing"] },
+        image: { type: String },
         quantity: {
           type: Number,
           required: [true, "Quantity is missing"],
@@ -34,17 +36,18 @@ const orderSchema = new mongoose.Schema(
     totalPrice: {
       type: Number,
       required: [true, "Total price is missing"],
+      min: [0, "Total price must be positive number"],
     },
     status: {
       type: String,
       required: [true, "Order status is missing"],
-      enum: ["pending", "confirmed", "shipped", "delivered"],
+      enum: ["pending", "processing", "confirmed", "shipped", "delivered"],
       default: "pending",
     },
     shippingAddress: {
-      street: {
+      address: {
         type: String,
-        required: [true, "Street in shipping address is missing"],
+        required: [true, "Address in shipping address is missing"],
       },
       city: {
         type: String,
@@ -66,18 +69,24 @@ const orderSchema = new mongoose.Schema(
     paymentStatus: {
       type: String,
       required: [true, "Payment status is missing"],
-      enum: ["pending", "paid"],
+      enum: ["pending", "paid", "failed"],
       default: "pending",
     },
     paymentDetails: {
       orderId: String,
-      paymentId: String,
+      paymentId: {
+        type: String,
+        default: null,
+      },
       signature: String,
     },
-    deliveredAt: {
-      type: Date,
-      default: null,
+    paymentMethod: {
+      type: String,
+      enum: ["COD", "online"],
+      default: "COD",
     },
+    deliveredAt: { type: Date },
+    paidAt: { type: Date },
   },
   { timestamps: true }
 );
