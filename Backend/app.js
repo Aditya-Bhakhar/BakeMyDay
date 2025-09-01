@@ -4,6 +4,7 @@ dotenv.config({
 });
 import express from "express";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 import userRoutes from "./src/routes/user.route.js";
 import productRoutes from "./src/routes/product.route.js";
 import cartRoutes from "./src/routes/cart.route.js";
@@ -16,6 +17,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use(cookieParser());
+
+app.use(
+  cors({
+    origin: ["http://localhost:5173"],
+    credentials: true,
+  })
+);
 
 app.get("/", (req, res) => {
   res.json({ success: true });

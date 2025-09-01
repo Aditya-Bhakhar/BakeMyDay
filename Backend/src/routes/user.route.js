@@ -11,16 +11,31 @@ router.post(
   upload.single("profilePhoto"),
   [
     body("email").isEmail().withMessage("Invalid Email..."),
-    body("firstname")
-      .isLength({ min: 3 })
-      .withMessage("Firstname must be at least 3 character long..."),
-    body("lastname")
-      .isLength({ min: 3 })
-      .withMessage("Lastname must be at least 3 character long..."),
+    body("name.firstname")
+      .isLength({ min: 2 })
+      .withMessage("Firstname must be at least 2 character long..."),
+    body("name.lastname")
+      .isLength({ min: 2 })
+      .withMessage("Lastname must be at least 2 character long..."),
     body("password")
       .isLength({ min: 6 })
       .withMessage("Password must be at least 6 character long..."),
   ],
+  (req, res, next) => {
+    if (req.body["name.firstname"] || req.body["name.lastname"]) {
+      req.body.name = {
+        firstname: req.body["name.firstname"],
+        lastname: req.body["name.lastname"],
+      };
+      delete req.body["name.firstname"];
+      delete req.body["name.lastname"];
+    }
+
+    if (req.file && !req.file.mimetype.startsWith("image/")) {
+      return res.status(400).json({ errors: [{ msg: "Invalid file type" }] });
+    }
+    next();
+  },
   userController.registerUser
 );
 

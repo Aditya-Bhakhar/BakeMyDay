@@ -15,9 +15,7 @@ const registerUser = async (req, res) => {
     }
 
     const {
-      salutation,
-      firstname,
-      lastname,
+      name,
       email,
       password,
       age,
@@ -63,11 +61,7 @@ const registerUser = async (req, res) => {
     }
 
     const createdUser = await User.create({
-      name: {
-        salutation,
-        firstname,
-        lastname,
-      },
+      name,
       email,
       password,
       age,
@@ -180,6 +174,8 @@ const loginUser = async (req, res) => {
         success: true,
         message: "User logged in successfully...",
         user: loggedInUser,
+        accessToken,
+        refreshToken,
       });
   } catch (error) {
     console.error("ERROR :: in loginUser controller :: ", error);
