@@ -48,6 +48,12 @@ router.post(
   userController.loginUser
 );
 
+router.post(
+  "/user/refreshToken",
+  [body("refreshToken").isEmpty().withMessage("Refresh Token  is missing...")],
+  userController.refreshAccessToken
+);
+
 // secure routes
 router.post(
   "/logout",

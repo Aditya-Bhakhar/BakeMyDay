@@ -1,6 +1,7 @@
 import { validationResult } from "express-validator";
 import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import jwt from "jsonwebtoken";
 
 const registerUser = async (req, res) => {
   try {
@@ -14,13 +15,7 @@ const registerUser = async (req, res) => {
       });
     }
 
-    const {
-      name,
-      email,
-      password,
-      age,
-      phoneNumber,
-    } = req.body;
+    const { name, email, password, age, phoneNumber } = req.body;
 
     const file = req.file;
 
@@ -187,6 +182,62 @@ const loginUser = async (req, res) => {
   }
 };
 
+const refreshAccessToken = async (req, res) => {
+  try {
+    const { refreshToken } = req.body();
+
+    if (!refreshToken) throw new Error("Refresh Token is missing...");
+
+    const user = await User.findOne({ refreshToken: refreshToken });
+
+    if (!user) {
+      return res.status(403).json({
+        success: false,
+        message: "Invalid Refresh Token...",
+        error:
+          error.message || "Something went wrong while refreshing access token",
+      });
+    }
+
+    const options = {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    };
+
+    await jwt.verify(
+      refreshToken,
+      process.env.REFRESH_TOKEN_SECRET,
+      (error, decoded) => {
+        if (error) {
+          return res.status(403).json({
+            success: false,
+            message: "Invalid or expired refresh token..",
+            error:
+              error.message ||
+              "Something went wrong while refreshing access token",
+          });
+        }
+
+        const accessToken = user.generateAccessToken();
+        return res.status(200).json({
+          success: true,
+          message: "Access token refreshed successfully...",
+          accessToken,
+        });
+      }
+    );
+  } catch (error) {
+    console.error("ERROR :: in refreshAccessToken controller :: ", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error while refreshing access token...",
+      error:
+        error.message || "Something went wrong while refreshing access token",
+    });
+  }
+};
+
 const logoutUser = async (req, res) => {
   try {
     const user = req.user;
@@ -304,6 +355,7 @@ export default {
   registerUser,
   loginUser,
   logoutUser,
+  refreshAccessToken,
   getUserProfile,
   promoteToAdmin,
 };

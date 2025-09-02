@@ -47,7 +47,8 @@ const Login = () => {
         loginSuccess({
           isAuthenticated: true,
           user: data?.user,
-          token: data?.accessToken,
+          accessToken: data?.accessToken,
+          refreshToken: data?.refreshToken,
         })
       );
       // queryClient.invalidateQueries({ queryKey: ["user-login"] });

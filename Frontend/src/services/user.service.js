@@ -29,3 +29,23 @@ export const registerUser = async (data) => {
     throw error;
   }
 };
+
+export const refreshAccessToken = async (data) => {
+  try {
+    const response = await api.post("/user/refreshToken", data);
+    return response.data;
+  } catch (error) {
+    console.error("ERROR :: in refreshAccessToken service :: ", error);
+    throw error;
+  }
+};
+
+export const getUserProfile = async () => {
+  try {
+    const response = await api.get("/user/profile");
+    return response.data;
+  } catch (error) {
+    console.error("ERROR :: in getUserProfile service :: ", error);
+    throw error;
+  }
+};
